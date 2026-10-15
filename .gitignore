@@ -1,0 +1,14 @@
+# 建置產物（發布時上傳到 GitHub Releases，不放進 git）
+dist/
+
+# 測試用的 librime（python -m tools.fetch_librime 下載）
+.cache/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# 系統檔
+.DS_Store
+Thumbs.db

@@ -1,0 +1,15 @@
+# Rime default settings patch
+# encoding: utf-8
+#
+# 把「三角編號」加進輸入方案清單，原本的方案都會保留。
+#
+# 注意：這個檔案會取代你原本的 default.custom.yaml（如果有的話）。
+# 如果你已經有自己的 default.custom.yaml，請不要匯入這個檔案，
+# 改成在你原本的 patch 裡加入下面這兩行：
+#
+#   schema_list/+:
+#     - schema: sanjiao
+
+patch:
+  schema_list/+:
+    - schema: sanjiao

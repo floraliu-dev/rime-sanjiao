@@ -1,0 +1,38 @@
+# 每次 push 或開 Pull Request 時自動執行測試。
+# - Linux：檢查產生的檔案是最新的，跑不需要 RIME 引擎的測試。
+# - Windows、macOS：下載官方 librime 1.17.0，連同實際輸入行為一起測。
+name: tests
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install test dependencies
+        run: python -m pip install -r requirements-dev.txt
+
+      - name: Generated files are up to date
+        run: python -X utf8 build.py --check
+
+      - name: Download librime
+        if: runner.os != 'Linux'
+        run: python -X utf8 -m tools.fetch_librime
+
+      - name: Run tests
+        run: python -X utf8 -m unittest discover -s tests -t . -v

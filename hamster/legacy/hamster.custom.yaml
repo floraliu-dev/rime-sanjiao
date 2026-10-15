@@ -1,0 +1,98 @@
+# 倉輸入法（Hamster）設定補丁：三角編號鍵盤
+#
+# 本檔由 build.py 自動產生，請勿手動修改；鍵盤配置定義在 tools/keyboard.py。
+# 版本：0.1.0　鍵盤語法：legacy
+#
+# 注意：
+# 1. 匯入後會取代手機上原有的 hamster.custom.yaml（如果有的話）。
+# 2. keyboards 清單會整個取代倉內建的自訂鍵盤範例（例如倉頡、大千注音），
+#    內建的中文 26 鍵、九宮格、英文鍵盤不受影響。
+# 3. useKeyboardType 只在你沒有從倉的設定畫面手動選過鍵盤時生效；
+#    如果鍵盤沒有變，請到「鍵盤設定 → 鍵盤布局」手動選「三角編號」。
+
+patch:
+  keyboard:
+    useKeyboardType: "custom(三角編號)"
+  keyboards:
+    - name: "三角編號"
+      isPrimary: true
+      rows:
+        - keys:
+            - action: "keyboardType(classifySymbolic)"
+              label: "符號"
+            - action: "character(1)"
+              processByRIME: true
+            - action: "character(2)"
+              processByRIME: true
+            - action: "character(3)"
+              processByRIME: true
+            - action: backspace
+              swipe:
+                - direction: up
+                  action: "shortCommand(#重输)"
+                  label: "清除"
+                  display: true
+        - keys:
+            - action: "keyboardType(alphabetic)"
+              label: "ABC"
+            - action: "character(4)"
+              processByRIME: true
+            - action: "character(5)"
+              processByRIME: true
+            - action: "character(6)"
+              processByRIME: true
+            - action: "character(,)"
+              label: "，"
+              processByRIME: true
+              swipe:
+                - direction: up
+                  action: "character(;)"
+                  label: "；"
+                  display: true
+                  processByRIME: true
+        - keys:
+            - action: nextKeyboard
+            - action: "character(7)"
+              processByRIME: true
+            - action: "character(8)"
+              processByRIME: true
+            - action: "character(9)"
+              processByRIME: true
+            - action: "character(.)"
+              label: "。"
+              processByRIME: true
+              swipe:
+                - direction: up
+                  action: "character(:)"
+                  label: "："
+                  display: true
+                  processByRIME: true
+        - keys:
+            - action: "character(?)"
+              label: "？"
+              processByRIME: true
+              swipe:
+                - direction: up
+                  action: "character(!)"
+                  label: "！"
+                  display: true
+                  processByRIME: true
+            - action: "character(\\)"
+              label: "、"
+              processByRIME: true
+              swipe:
+                - direction: up
+                  action: "character([)"
+                  label: "「"
+                  display: true
+                  processByRIME: true
+                - direction: down
+                  action: "character(])"
+                  label: "」"
+                  display: true
+                  processByRIME: true
+            - action: "character(0)"
+              processByRIME: true
+            - action: space
+              label: { loadingText: "三角編號", text: "空格" }
+            - action: enter

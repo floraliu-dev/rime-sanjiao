@@ -1,0 +1,8 @@
+# Rime schema patch
+# encoding: utf-8
+#
+# 三角編號：開啟字頻學習（選過的字下次排在前面）
+# 用法見 docs/customize.md。把本檔放進 RIME 使用者資料夾後重新部署。
+
+patch:
+  translator/enable_user_dict: true
