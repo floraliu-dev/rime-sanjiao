@@ -2,6 +2,14 @@
 
 格式參考 [Keep a Changelog](https://keepachangelog.com/zh-TW/1.1.0/)，版本號採用 [語意化版本](https://semver.org/lang/zh-TW/)。
 
+## 0.1.1（2026-10-16）
+
+輸入行為和 0.1.0 相同，不需要急著更新。
+
+### 變更
+- 安裝包檔名不再包含版本號：`rime-sanjiao-hamster.zip`、`rime-sanjiao-schema-only.zip`。下載連結 `releases/latest/download/rime-sanjiao-hamster.zip` 永遠指向最新版，存成書籤就能更新。
+- 安裝教學新增「更新到新版」與新版通知的說明。
+
 ## 0.1.0（2026-10-16）
 
 第一個版本。

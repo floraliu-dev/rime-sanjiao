@@ -17,7 +17,7 @@
 schema:
   schema_id: sanjiao
   name: 三角編號
-  version: "0.1.0"
+  version: "0.1.1"
   author:
     - 編碼規則 胡立人、張源渭、黃克東（美國王安電腦公司）
     - RIME 方案 Flora Liu
