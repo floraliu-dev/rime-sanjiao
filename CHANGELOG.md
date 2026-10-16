@@ -2,7 +2,7 @@
 
 格式參考 [Keep a Changelog](https://keepachangelog.com/zh-TW/1.1.0/)，版本號採用 [語意化版本](https://semver.org/lang/zh-TW/)。
 
-## 0.1.0（開發中）
+## 0.1.0（2026-10-16）
 
 第一個版本。
 

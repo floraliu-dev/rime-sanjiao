@@ -83,7 +83,7 @@ git commit -am "Release 0.1.0"
 git tag v0.1.0
 git push --follow-tags
 gh release create v0.1.0 dist/rime-sanjiao-0.1.0-hamster.zip dist/rime-sanjiao-0.1.0-schema-only.zip \
-  --title "0.1.0" --notes-file <(sed -n '/^## 0.1.0/,/^## /p' CHANGELOG.md | sed '$d')
+  --title "0.1.0" --notes-file <(awk '/^## 0.1.0/{f=1; next} /^## /{f=0} f' CHANGELOG.md)
 ```
 
 GitHub Releases 頁面上的下載次數，就是「有多少人下載」的數據來源。
