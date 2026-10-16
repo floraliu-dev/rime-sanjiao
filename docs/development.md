@@ -62,7 +62,7 @@ git push
 
 1. 安裝 [鼠鬚管](https://rime.im/download/)（RIME 的 macOS 版，免費）。
 2. 把 `rime/sanjiao.schema.yaml`、`rime/sanjiao.dict.yaml` 複製到 `~/Library/Rime/`。
-3. 在 `~/Library/Rime/default.custom.yaml` 加上 `schema_list/+`（見 `install-iphone.md`「已經有自訂設定的人」）。
+3. 在 `~/Library/Rime/default.custom.yaml` 加上 `schema_list/@before 0`（見 `install-iphone.md`「已經有自訂設定的人」）。
 4. 選單列的鼠鬚管圖示 →「重新部署」。
 
 實體鍵盤上數字不能用來選字，請用空白鍵或方向鍵，原因見 `design.md`。

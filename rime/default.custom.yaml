@@ -1,15 +1,17 @@
 # Rime default settings patch
 # encoding: utf-8
 #
-# 把「三角編號」加進輸入方案清單，原本的方案都會保留。
+# 把「三角編號」加到輸入方案清單的最前面，原本的方案都會保留。
+# 放最前面是因為倉輸入法每次叫出鍵盤都會載入清單上第一個方案；
+# 放在後面的話，每次都要手動切換。
 #
 # 注意：這個檔案會取代你原本的 default.custom.yaml（如果有的話）。
 # 如果你已經有自己的 default.custom.yaml，請不要匯入這個檔案，
 # 改成在你原本的 patch 裡加入下面這兩行：
 #
-#   schema_list/+:
-#     - schema: sanjiao
+#   schema_list/@before 0:
+#     schema: sanjiao
 
 patch:
-  schema_list/+:
-    - schema: sanjiao
+  schema_list/@before 0:
+    schema: sanjiao

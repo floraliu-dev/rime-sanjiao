@@ -26,7 +26,7 @@ RIME_DIST = Path(os.environ.get("RIME_DIST") or dist_dir())
 HAVE_RIME = find_library(RIME_DIST).exists()
 
 # A stand-in for the frontend's shared data: a default.yaml with one other
-# schema already in schema_list, to prove our patch appends instead of
+# schema already in schema_list, to prove our patch puts sanjiao first without
 # replacing the user's list.
 DEFAULT_YAML = """\
 config_version: "test"
@@ -95,8 +95,8 @@ class Behaviour(unittest.TestCase):
     def test_engine_version(self):
         self.assertEqual(self.rime.get_version().decode(), "1.17.0")
 
-    def test_schema_appended_to_existing_list(self):
-        self.assertEqual(self.rime.schema_ids(), ["other", "sanjiao"])
+    def test_schema_prepended_to_existing_list(self):
+        self.assertEqual(self.rime.schema_ids(), ["sanjiao", "other"])
 
     def test_no_errors_logged(self):
         self.assertEqual(error_logs(self.logs), "")
@@ -217,9 +217,10 @@ class OtherPackages(unittest.TestCase):
             return result.stdout
 
     def test_schema_only_zip(self):
-        # No default.custom.yaml: the user adds sanjiao to schema_list herself.
+        # No default.custom.yaml: the user adds sanjiao to schema_list themselves,
+        # with the snippet from docs/install-iphone.md.
         out = self.run_scenario("-schema-only.zip", {
-            "default.custom.yaml": "patch:\n  schema_list/+:\n    - schema: sanjiao\n",
+            "default.custom.yaml": "patch:\n  schema_list/@before 0:\n    schema: sanjiao\n",
         }, """
             s.type("101010")
             print(s.texts())

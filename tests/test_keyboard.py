@@ -1,6 +1,5 @@
-"""The 倉輸入法 keyboard: layout rules and both YAML syntaxes."""
+"""The 倉輸入法 keyboard: layout rules and the rendered YAML."""
 
-import re
 import unittest
 
 from tests import ROOT
@@ -20,10 +19,7 @@ try:
 except ImportError:  # pragma: no cover
     yaml = None
 
-HAMSTER_PATHS = {
-    "wiki": ROOT / "hamster" / "hamster.custom.yaml",
-    "legacy": ROOT / "hamster" / "legacy" / "hamster.custom.yaml",
-}
+HAMSTER_PATH = ROOT / "hamster" / "hamster.custom.yaml"
 
 # Hamster's documented vocabularies (wiki page 自定义布局).
 SIMPLE_ACTIONS = {"backspace", "enter", "shift", "tab", "space", "nextKeyboard", "none"}
@@ -92,28 +88,24 @@ class Layout(unittest.TestCase):
 
 @unittest.skipIf(yaml is None, "PyYAML not installed (pip install -r requirements-dev.txt)")
 class RenderedYaml(unittest.TestCase):
-    def load(self, fmt):
-        return yaml.safe_load(HAMSTER_PATHS[fmt].read_text(encoding="utf-8"))
+    def load(self):
+        return yaml.safe_load(HAMSTER_PATH.read_text(encoding="utf-8"))
 
-    def test_files_match_generator(self):
-        for fmt, path in HAMSTER_PATHS.items():
-            with self.subTest(fmt=fmt):
-                version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
-                self.assertEqual(path.read_text(encoding="utf-8"), render_hamster_custom(fmt, version=version))
+    def test_file_matches_generator(self):
+        version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
+        self.assertEqual(HAMSTER_PATH.read_text(encoding="utf-8"), render_hamster_custom(version=version))
 
     def test_structure(self):
-        for fmt in HAMSTER_PATHS:
-            with self.subTest(fmt=fmt):
-                patch = self.load(fmt)["patch"]
-                self.assertEqual(set(patch), {"keyboard", "keyboards"})
-                self.assertEqual(set(patch["keyboard"]), {"useKeyboardType"})
-                (kb,) = patch["keyboards"]
-                self.assertEqual(kb["name"], KEYBOARD_NAME)
-                self.assertIs(kb["isPrimary"], True)
-                self.assertEqual([len(r["keys"]) for r in kb["rows"]], [5, 5, 5, 5])
+        patch = self.load()["patch"]
+        self.assertEqual(set(patch), {"keyboard", "keyboards"})
+        self.assertEqual(set(patch["keyboard"]), {"useKeyboardType"})
+        (kb,) = patch["keyboards"]
+        self.assertEqual(kb["name"], KEYBOARD_NAME)
+        self.assertIs(kb["isPrimary"], True)
+        self.assertEqual([len(r["keys"]) for r in kb["rows"]], [5, 5, 5, 5])
 
     def test_wiki_syntax(self):
-        patch = self.load("wiki")["patch"]
+        patch = self.load()["patch"]
         self.assertEqual(patch["keyboard"]["useKeyboardType"], KEYBOARD_NAME)
         for row in patch["keyboards"][0]["rows"]:
             for key in row["keys"]:
@@ -127,34 +119,14 @@ class RenderedYaml(unittest.TestCase):
                             self.assertEqual(set(action[kind]), {"char"})
                             self.assertEqual(len(action[kind]["char"]), 1)
 
-    def test_legacy_syntax(self):
-        # Mirrors String.attributeParse() in Hamster 2.1.x: name(value), with
-        # the value taken verbatim between the first "(" and the last ")".
-        pattern = re.compile(r"^(character|keyboardType|shortCommand)\((.+)\)$")
-        patch = self.load("legacy")["patch"]
-        self.assertEqual(patch["keyboard"]["useKeyboardType"], f"custom({KEYBOARD_NAME})")
-        for row in patch["keyboards"][0]["rows"]:
-            for key in row["keys"]:
-                for action in [key["action"]] + [s["action"] for s in key.get("swipe", [])]:
-                    with self.subTest(action=action):
-                        self.assertIsInstance(action, str)
-                        if action not in SIMPLE_ACTIONS:
-                            m = pattern.match(action)
-                            self.assertIsNotNone(m)
-                            if m.group(1) == "character":
-                                self.assertEqual(len(m.group(2)), 1)
-
     def test_rime_keys_marked_for_rime(self):
         # Keys and swipes that send characters must go through RIME, or the
         # punctuator never sees them. Swipes default to bypassing RIME.
-        for fmt in HAMSTER_PATHS:
-            for row in self.load(fmt)["patch"]["keyboards"][0]["rows"]:
-                for item in row["keys"] + [s for k in row["keys"] for s in k.get("swipe", [])]:
-                    action = item["action"]
-                    sends_char = (isinstance(action, dict) and "character" in action) or (
-                        isinstance(action, str) and action.startswith("character("))
-                    if sends_char:
-                        self.assertIs(item.get("processByRIME"), True, msg=f"{fmt}: {action}")
+        for row in self.load()["patch"]["keyboards"][0]["rows"]:
+            for item in row["keys"] + [s for k in row["keys"] for s in k.get("swipe", [])]:
+                action = item["action"]
+                if isinstance(action, dict) and "character" in action:
+                    self.assertIs(item.get("processByRIME"), True, msg=str(action))
 
 
 if __name__ == "__main__":
