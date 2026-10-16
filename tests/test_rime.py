@@ -53,7 +53,7 @@ def make_rime_dirs(base: Path, zip_suffix: str, extra_user_files: dict[str, str]
         d.mkdir()
     (shared / "default.yaml").write_text(DEFAULT_YAML, encoding="utf-8")
     (shared / "other.schema.yaml").write_text(OTHER_SCHEMA, encoding="utf-8")
-    zips = build.package(build.read_version(), dist=base / "dist")
+    zips = build.package(dist=base / "dist")
     (zip_path,) = [p for p in zips if p.name.endswith(zip_suffix)]
     with zipfile.ZipFile(zip_path) as zf:
         zf.extractall(user)

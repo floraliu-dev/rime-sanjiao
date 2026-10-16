@@ -82,8 +82,10 @@ git push
 git commit -am "Release 0.1.0"
 git tag -a v0.1.0 -m "0.1.0"   # 要用 -a，--follow-tags 才會推上去
 git push --follow-tags
-gh release create v0.1.0 dist/rime-sanjiao-0.1.0-hamster.zip dist/rime-sanjiao-0.1.0-schema-only.zip \
+gh release create v0.1.0 dist/rime-sanjiao-hamster.zip dist/rime-sanjiao-schema-only.zip \
   --title "0.1.0" --notes-file <(awk '/^## 0.1.0/{f=1; next} /^## /{f=0} f' CHANGELOG.md)
 ```
+
+安裝包檔名不含版本號，所以 `releases/latest/download/rime-sanjiao-hamster.zip` 永遠指向最新版（安裝教學用的就是這個連結）。不要改檔名，測試會檢查。
 
 GitHub Releases 頁面上的下載次數，就是「有多少人下載」的數據來源。

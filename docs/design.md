@@ -82,9 +82,10 @@ ABC    4   5   6   ，       ， 上滑：；
 
 | 檔案 | 內容 | 給誰 |
 |---|---|---|
-| `rime-sanjiao-<版本>-hamster.zip` | 方案、碼表、`default.custom.yaml`、`hamster.custom.yaml` | 倉輸入法使用者，一次匯入就好 |
-| `rime-sanjiao-<版本>-schema-only.zip` | 方案、碼表 | 自己管理 RIME 設定的人（任何 RIME 前端） |
+| `rime-sanjiao-hamster.zip` | 方案、碼表、`default.custom.yaml`、`hamster.custom.yaml` | 倉輸入法使用者，一次匯入就好 |
+| `rime-sanjiao-schema-only.zip` | 方案、碼表 | 自己管理 RIME 設定的人（任何 RIME 前端） |
 
+- 檔名**不含版本號**，讓 `releases/latest/download/<檔名>` 成為固定的最新版連結，使用者存一個書籤就能更新。版本號記在方案的 `schema/version` 和發布標籤上。
 - zip 裡**沒有資料夾**，這是倉輸入法匯入的要求。
 - 同樣的原始檔，每次會產生完全相同的 zip（時間戳記固定），方便比對版本。
 - `default.custom.yaml` 用 `schema_list/@before 0` 把方案**插到清單最前面**，不會蓋掉清單上原本的方案。一定要排第一：倉輸入法每次叫出鍵盤都載入清單上第一個方案，排在後面的話數字會被別的方案直接送出（實機測到的問題）。但這個檔案本身會取代使用者原有的 `default.custom.yaml`，所以已經有自訂設定的人應該用 schema-only 包。
