@@ -7,23 +7,13 @@
 ## 0. 準備
 
 - [ ] 記錄測試環境：iPhone 型號＿＿＿、iOS 版本＿＿＿、倉輸入法版本＿＿＿（App 內「關於」）
-- [ ] 在電腦執行 `python build.py --package`，把 `dist/` 裡的兩個 hamster zip 傳到手機（AirDrop 或 iCloud 雲碟都可以）
+- [ ] 在電腦執行 `python build.py --package`，把 `dist/` 裡的 `-hamster.zip` 傳到手機（AirDrop 或 iCloud 雲碟都可以）
 
-## 1. 決定鍵盤語法（最重要，先做）
+## 1. 鍵盤能不能顯示（先做）
 
-倉輸入法的自訂鍵盤格式改過，目前版本用哪一種要實際試過才知道（見 `design.md`「兩種鍵盤語法」）。
+- [ ] 匯入 `rime-sanjiao-<版本>-hamster.zip`，照 `install-iphone.md` 第 5、6 步操作。鍵盤是否出現三角數字鍵盤？＿＿＿
 
-**快速查法**：倉輸入法 App 裡有檔案瀏覽功能，打開 `SharedSupport/hamster.yaml`，搜尋 `keyboards`，看裡面倉頡鍵盤的按鍵怎麼寫：
-
-- 寫成 `action: { character: { char: q } }` → 新語法（`wiki`）
-- 寫成 `action: character(q)` → 舊語法（`legacy`）
-
-**實測**：
-
-- [ ] 匯入 `rime-sanjiao-<版本>-hamster.zip`（wiki 語法），照 `install-iphone.md` 第 5、6 步操作。鍵盤是否出現三角數字鍵盤？＿＿＿
-- [ ] 如果沒有出現，或倉輸入法顯示錯誤：改匯入 `-hamster-legacy.zip` 再試一次。結果＿＿＿
-
-**確認後要修改的地方**：如果是 legacy 語法才正確，就把 `build.py` 的 hamster zip 改用 legacy 那份，並把結果記到 `design.md`。
+如果沒有出現，可能是倉輸入法又改了自訂鍵盤的格式：打開 App 裡的 `SharedSupport/hamster.yaml`，對照內建鍵盤按鍵的寫法和 `design.md`「鍵盤語法」。
 
 ## 2. 安裝流程（照 install-iphone.md 從頭做一次）
 

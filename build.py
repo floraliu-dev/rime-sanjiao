@@ -7,8 +7,7 @@ Usage:
 
 Generated files (never edit these by hand):
     rime/sanjiao.dict.yaml               from data/3corner.cin
-    hamster/hamster.custom.yaml          keyboard, wiki syntax
-    hamster/legacy/hamster.custom.yaml   keyboard, legacy syntax
+    hamster/hamster.custom.yaml          keyboard
 
 Hand-written files:
     rime/sanjiao.schema.yaml, rime/default.custom.yaml, tools/keyboard.py
@@ -45,10 +44,7 @@ UPSTREAM_NOTE = (
 SCHEMA_PATH = ROOT / "rime" / "sanjiao.schema.yaml"
 DEFAULT_CUSTOM_PATH = ROOT / "rime" / "default.custom.yaml"
 DICT_PATH = ROOT / "rime" / "sanjiao.dict.yaml"
-HAMSTER_PATHS = {
-    "wiki": ROOT / "hamster" / "hamster.custom.yaml",
-    "legacy": ROOT / "hamster" / "legacy" / "hamster.custom.yaml",
-}
+HAMSTER_PATH = ROOT / "hamster" / "hamster.custom.yaml"
 DIST = ROOT / "dist"
 
 # Fixed timestamp so the same sources always produce byte-identical zips.
@@ -78,10 +74,10 @@ def generated_files(version: str) -> dict[Path, str]:
             "If the code table was updated on purpose, follow data/SOURCE.md."
         )
     table = parse_cin(CIN_PATH)
-    files = {DICT_PATH: render_dict(table, version=version, source_note=UPSTREAM_NOTE)}
-    for fmt, path in HAMSTER_PATHS.items():
-        files[path] = render_hamster_custom(fmt, version=version)
-    return files
+    return {
+        DICT_PATH: render_dict(table, version=version, source_note=UPSTREAM_NOTE),
+        HAMSTER_PATH: render_hamster_custom(version=version),
+    }
 
 
 def write_zip(path: Path, members: dict[str, Path]) -> None:
@@ -105,13 +101,7 @@ def package(version: str, dist: Path = DIST) -> list[Path]:
         dist / f"rime-sanjiao-{version}-hamster.zip": {
             **schema_files,
             "default.custom.yaml": DEFAULT_CUSTOM_PATH,
-            "hamster.custom.yaml": HAMSTER_PATHS["wiki"],
-        },
-        # Same, with the keyboard in the legacy syntax (device testing only).
-        dist / f"rime-sanjiao-{version}-hamster-legacy.zip": {
-            **schema_files,
-            "default.custom.yaml": DEFAULT_CUSTOM_PATH,
-            "hamster.custom.yaml": HAMSTER_PATHS["legacy"],
+            "hamster.custom.yaml": HAMSTER_PATH,
         },
         # Only the schema, for people who manage their own RIME config
         # (any RIME frontend: 倉, 鼠鬚管, 小狼毫, 中州韻 ...).

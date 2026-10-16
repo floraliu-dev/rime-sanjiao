@@ -53,7 +53,6 @@ class Packages(unittest.TestCase):
     def test_contents(self):
         full = ["default.custom.yaml", "hamster.custom.yaml", "sanjiao.dict.yaml", "sanjiao.schema.yaml"]
         self.assertEqual(self.names("-hamster.zip"), full)
-        self.assertEqual(self.names("-hamster-legacy.zip"), full)
         self.assertEqual(self.names("-schema-only.zip"), ["sanjiao.dict.yaml", "sanjiao.schema.yaml"])
 
     def test_flat_no_folders(self):
@@ -63,11 +62,10 @@ class Packages(unittest.TestCase):
                 for name in zf.namelist():
                     self.assertNotIn("/", name, msg=f"{path.name}: {name}")
 
-    def test_hamster_zip_uses_matching_keyboard(self):
-        for suffix, fmt in (("-hamster.zip", "wiki"), ("-hamster-legacy.zip", "legacy")):
-            (path,) = [p for p in self.paths if p.name.endswith(suffix)]
-            with zipfile.ZipFile(path) as zf:
-                self.assertEqual(zf.read("hamster.custom.yaml"), build.HAMSTER_PATHS[fmt].read_bytes())
+    def test_hamster_zip_uses_keyboard(self):
+        (path,) = [p for p in self.paths if p.name.endswith("-hamster.zip")]
+        with zipfile.ZipFile(path) as zf:
+            self.assertEqual(zf.read("hamster.custom.yaml"), build.HAMSTER_PATH.read_bytes())
 
     def test_reproducible(self):
         with tempfile.TemporaryDirectory() as other:

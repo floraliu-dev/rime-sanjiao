@@ -1,15 +1,8 @@
 """The 三角編號 touch keyboard for 倉輸入法 (Hamster), defined once.
 
-Hamster has used two YAML syntaxes for custom keyboards:
-
-* "wiki"   - the format in the official wiki page 自定义布局 (Hamster 2.2.0+):
-             action: { character: { char: "1" } }
-* "legacy" - the format parsed by the last open-source release (2.1.x):
-             action: character(1)
-
-Which one the current App Store build accepts must be confirmed on a real
-device (see docs/device-test.md). Both are generated from the single LAYOUT
-below so they can never drift apart.
+Rendered in the syntax of the official wiki page 自定义布局 (Hamster 2.2.0+),
+action: { character: { char: "1" } }, which the App Store build accepts
+(confirmed on a device on 2026-10-16, see docs/device-test.md).
 
 Layout (portrait), 5 equal-width columns:
 
@@ -121,46 +114,29 @@ def ascii_sent_to_rime() -> set[str]:
 
 # ---- rendering --------------------------------------------------------------
 
-FORMATS = ("wiki", "legacy")
-
-
 def _q(value: str) -> str:
     """YAML double-quoted scalar."""
     return '"' + value.replace("\\", "\\\\").replace('"', '\\"') + '"'
 
 
-def _action(action: Action, fmt: str) -> str:
-    if fmt == "wiki":
-        if isinstance(action, Char):
-            return f"{{ character: {{ char: {_q(action.char)} }} }}"
-        if isinstance(action, Simple):
-            return action.name
-        if isinstance(action, SwitchKeyboard):
-            return f"{{ keyboardType: {action.keyboard_type} }}"
-        if isinstance(action, Shortcut):
-            return f"{{ shortcutCommand: {_q(action.command)} }}"
-    elif fmt == "legacy":
-        # The legacy parser reads everything between the first "(" and the
-        # last ")" verbatim, so no escaping happens inside the parentheses.
-        if isinstance(action, Char):
-            return _q(f"character({action.char})")
-        if isinstance(action, Simple):
-            return action.name
-        if isinstance(action, SwitchKeyboard):
-            return _q(f"keyboardType({action.keyboard_type})")
-        if isinstance(action, Shortcut):
-            return _q(f"shortCommand({action.command})")
-    raise ValueError(f"cannot render {action!r} as {fmt}")
+def _action(action: Action) -> str:
+    if isinstance(action, Char):
+        return f"{{ character: {{ char: {_q(action.char)} }} }}"
+    if isinstance(action, Simple):
+        return action.name
+    if isinstance(action, SwitchKeyboard):
+        return f"{{ keyboardType: {action.keyboard_type} }}"
+    if isinstance(action, Shortcut):
+        return f"{{ shortcutCommand: {_q(action.command)} }}"
+    raise ValueError(f"cannot render {action!r}")
 
 
-def render_keyboard(fmt: str, base: int = 4) -> str:
+def render_keyboard(base: int = 4) -> str:
     """Render the keyboard as one item of Hamster's `keyboards:` list.
 
     `base` is the column of the leading "- ". Each nested level is indented
     so that a mapping's keys line up with the first key after its "- ".
     """
-    if fmt not in FORMATS:
-        raise ValueError(f"unknown format {fmt!r}")
     sp = " "
     item = sp * base            # "- name:"
     kb = sp * (base + 2)        # keyboard fields
@@ -175,7 +151,7 @@ def render_keyboard(fmt: str, base: int = 4) -> str:
     for row in LAYOUT:
         out.append(f"{row_item}- keys:")
         for key in row:
-            out.append(f"{key_item}- action: {_action(key.action, fmt)}")
+            out.append(f"{key_item}- action: {_action(key.action)}")
             if key.action == Simple("space"):
                 # Space takes a {loadingText, text} label; loadingText shows
                 # briefly when the keyboard appears.
@@ -188,7 +164,7 @@ def render_keyboard(fmt: str, base: int = 4) -> str:
                 out.append(f"{i4}swipe:")
                 for s in key.swipes:
                     out.append(f"{i4}  - direction: {s.direction}")
-                    out.append(f"{i4}    action: {_action(s.action, fmt)}")
+                    out.append(f"{i4}    action: {_action(s.action)}")
                     out.append(f"{i4}    label: {_q(s.label)}")
                     out.append(f"{i4}    display: true")
                     # Swipes default to bypassing RIME; route them through it
@@ -198,36 +174,23 @@ def render_keyboard(fmt: str, base: int = 4) -> str:
     return "\n".join(out) + "\n"
 
 
-def use_keyboard_type(fmt: str) -> str:
-    """Value for keyboard/useKeyboardType that selects this keyboard.
-
-    The wiki format names a custom keyboard directly; the legacy parser
-    expects custom(<name>).
-    """
-    if fmt == "wiki":
-        return KEYBOARD_NAME
-    if fmt == "legacy":
-        return f"custom({KEYBOARD_NAME})"
-    raise ValueError(f"unknown format {fmt!r}")
-
-
-def render_hamster_custom(fmt: str, *, version: str) -> str:
-    """Return the full text of hamster.custom.yaml for the given format."""
+def render_hamster_custom(*, version: str) -> str:
+    """Return the full text of hamster.custom.yaml."""
     return f"""\
 # 倉輸入法（Hamster）設定補丁：三角編號鍵盤
 #
 # 本檔由 build.py 自動產生，請勿手動修改；鍵盤配置定義在 tools/keyboard.py。
-# 版本：{version}　鍵盤語法：{fmt}
+# 版本：{version}
 #
 # 注意：
 # 1. 匯入後會取代手機上原有的 hamster.custom.yaml（如果有的話）。
 # 2. keyboards 清單會整個取代倉內建的自訂鍵盤範例（例如倉頡、大千注音），
 #    內建的中文 26 鍵、九宮格、英文鍵盤不受影響。
 # 3. useKeyboardType 只在你沒有從倉的設定畫面手動選過鍵盤時生效；
-#    如果鍵盤沒有變，請到「鍵盤設定 → 鍵盤布局」手動選「{KEYBOARD_NAME}」。
+#    如果鍵盤沒有變，請到「鍵盤設定 → 鍵盤佈局」手動選「{KEYBOARD_NAME}」。
 
 patch:
   keyboard:
-    useKeyboardType: {_q(use_keyboard_type(fmt))}
+    useKeyboardType: {_q(KEYBOARD_NAME)}
   keyboards:
-{render_keyboard(fmt)}"""
+{render_keyboard()}"""

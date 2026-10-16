@@ -74,16 +74,9 @@ ABC    4   5   6   ，       ， 上滑：；
 - 🌐 一定要有：有 Home 鍵的 iPhone（例如 iPhone SE）在鍵盤下方沒有系統的地球鍵。
 - 「符號」和「ABC」切換到倉輸入法內建的符號與英文鍵盤，在那裡可以按返回鍵回到三角鍵盤（`isPrimary: true`）。
 
-### 兩種鍵盤語法
+### 鍵盤語法
 
-倉輸入法的自訂鍵盤格式曾經改過：
-
-| 語法 | 範例 | 出處 |
-|---|---|---|
-| `wiki` | `action: { character: { char: "1" } }` | 官方 wiki「自定义布局」（2.2.0 以後） |
-| `legacy` | `action: character(1)` | 最後一個開源版本（2.1.x）的原始碼 |
-
-兩種都由 `tools/keyboard.py` 的同一份定義產生。2026-10-16 實機確認 App Store 版本用的是 `wiki` 語法（`-hamster.zip` 直接顯示三角鍵盤）。
+鍵盤用官方 wiki「自定义布局」的語法（2.2.0 以後），例如 `action: { character: { char: "1" } }`。最後一個開源版本（2.1.x）用的是另一種寫法 `action: character(1)`，曾經兩種都產生；2026-10-16 實機確認 App Store 版本用 wiki 語法後，就只保留這一種。
 
 ## 安裝包
 
@@ -91,7 +84,6 @@ ABC    4   5   6   ，       ， 上滑：；
 |---|---|---|
 | `rime-sanjiao-<版本>-hamster.zip` | 方案、碼表、`default.custom.yaml`、`hamster.custom.yaml` | 倉輸入法使用者，一次匯入就好 |
 | `rime-sanjiao-<版本>-schema-only.zip` | 方案、碼表 | 自己管理 RIME 設定的人（任何 RIME 前端） |
-| `rime-sanjiao-<版本>-hamster-legacy.zip` | 同 hamster，鍵盤用舊語法 | 只在實機測試時使用 |
 
 - zip 裡**沒有資料夾**，這是倉輸入法匯入的要求。
 - 同樣的原始檔，每次會產生完全相同的 zip（時間戳記固定），方便比對版本。
@@ -107,7 +99,7 @@ ABC    4   5   6   ，       ， 上滑：；
 |---|---|---|
 | 碼表解析 | `tests/test_cin.py` | 格式錯誤一定會被擋下；真實碼表的筆數、已知字、開頭的 0 |
 | 碼表產生 | `tests/test_dict.py` | 每個字都在、權重與排序規則一致 |
-| 鍵盤 | `tests/test_keyboard.py` | 版面、兩種語法、每個標點鍵在方案裡都有對應 |
+| 鍵盤 | `tests/test_keyboard.py` | 版面、鍵盤語法、每個標點鍵在方案裡都有對應 |
 | 建置 | `tests/test_build.py` | 產生的檔案是最新的、版本號一致、zip 內容正確且每次相同 |
 | 引擎實測 | `tests/test_rime.py` | 用官方 librime 1.17.0 實際按鍵，驗證上面表格裡的每一種行為 |
 
