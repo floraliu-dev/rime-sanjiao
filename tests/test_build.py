@@ -38,8 +38,7 @@ class Packages(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.tmp = tempfile.TemporaryDirectory()
-        cls.version = build.read_version()
-        cls.paths = build.package(cls.version, dist=Path(cls.tmp.name))
+        cls.paths = build.package(dist=Path(cls.tmp.name))
 
     @classmethod
     def tearDownClass(cls):
@@ -55,6 +54,11 @@ class Packages(unittest.TestCase):
         self.assertEqual(self.names("-hamster.zip"), full)
         self.assertEqual(self.names("-schema-only.zip"), ["sanjiao.dict.yaml", "sanjiao.schema.yaml"])
 
+    def test_fixed_names(self):
+        # install-iphone.md links releases/latest/download/<name>; keep names stable.
+        self.assertEqual(sorted(p.name for p in self.paths),
+                         ["rime-sanjiao-hamster.zip", "rime-sanjiao-schema-only.zip"])
+
     def test_flat_no_folders(self):
         # 倉輸入法 requires the files at the zip root, with no folder.
         for path in self.paths:
@@ -69,7 +73,7 @@ class Packages(unittest.TestCase):
 
     def test_reproducible(self):
         with tempfile.TemporaryDirectory() as other:
-            again = build.package(self.version, dist=Path(other))
+            again = build.package(dist=Path(other))
             for a, b in zip(self.paths, again):
                 self.assertEqual(a.read_bytes(), b.read_bytes(), msg=a.name)
 

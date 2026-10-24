@@ -6,7 +6,7 @@
 
 - **主要目標**：在 iPhone 上用三角編號打字。執行環境是倉輸入法（Hamster）裡的 RIME 引擎。
 - **次要目標**：同一份方案也能用在其他 RIME 前端，例如 Mac 的鼠鬚管、Windows 的小狼毫，但不針對實體鍵盤做最佳化（見文末「實體鍵盤的限制」）。
-- **不做**：自己的 App。那是之後的階段，需要 Apple 開發者帳號（每年 US$99）。
+- **不做**：自己的 App，也不上架 App Store。透過倉輸入法就能在 iPhone 上使用，不需要 Apple 開發者帳號（每年 US$99），也不用維護一個 App。
 
 ## 架構
 
@@ -85,9 +85,10 @@ ABC    ，  0   。  換行     ， 上滑：；   。 上滑：：
 
 | 檔案 | 內容 | 給誰 |
 |---|---|---|
-| `rime-sanjiao-<版本>-hamster.zip` | 方案、碼表、`default.custom.yaml`、`hamster.custom.yaml` | 倉輸入法使用者，一次匯入就好 |
-| `rime-sanjiao-<版本>-schema-only.zip` | 方案、碼表 | 自己管理 RIME 設定的人（任何 RIME 前端） |
+| `rime-sanjiao-hamster.zip` | 方案、碼表、`default.custom.yaml`、`hamster.custom.yaml` | 倉輸入法使用者，一次匯入就好 |
+| `rime-sanjiao-schema-only.zip` | 方案、碼表 | 自己管理 RIME 設定的人（任何 RIME 前端） |
 
+- 檔名**不含版本號**，讓 `releases/latest/download/<檔名>` 成為固定的最新版連結，使用者存一個書籤就能更新。版本號記在方案的 `schema/version` 和發布標籤上。
 - zip 裡**沒有資料夾**，這是倉輸入法匯入的要求。
 - 同樣的原始檔，每次會產生完全相同的 zip，方便比對版本。每個檔案的時間戳記由檔案內容算出來：內容一樣，日期就一樣；內容改了，日期就不同。不能整包用同一個固定日期：RIME 只在原始檔的修改時間跟上次記錄的不同時才重新編譯方案，日期固定的話，更新後倉輸入法會一直用舊方案（2026-10-24 實機發現）。
 - `default.custom.yaml` 用 `schema_list/@before 0` 把方案**插到清單最前面**，不會蓋掉清單上原本的方案。一定要排第一：倉輸入法每次叫出鍵盤都載入清單上第一個方案，排在後面的話數字會被別的方案直接送出（實機測到的問題）。但這個檔案本身會取代使用者原有的 `default.custom.yaml`，所以已經有自訂設定的人應該用 schema-only 包。

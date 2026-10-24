@@ -24,7 +24,8 @@
 
 ## 4. 下載並匯入三角編號
 
-1. 用 iPhone 的 Safari 打開 [最新版下載頁](https://github.com/floraliu-dev/rime-sanjiao/releases/latest)，點 `rime-sanjiao-<版本>-hamster.zip` 下載。
+1. 用 iPhone 的 Safari 點這個連結下載最新版：[rime-sanjiao-hamster.zip](https://github.com/floraliu-dev/rime-sanjiao/releases/latest/download/rime-sanjiao-hamster.zip)
+   建議把這個連結加入書籤，之後更新時直接點它。
 2. 打開「檔案」App →「下載項目」，找到剛下載的 zip 檔。
 3. **長按** zip 檔 →「分享」→ 選「倉輸入法」。如果清單裡沒有，往右滑到最後點「更多」找。
    不要直接點 zip 檔：點一下會被「檔案」App 解壓縮成資料夾，不會匯入。
@@ -71,7 +72,7 @@ ABC    ，  0   。  換行
 
 ## 已經有自訂設定的人
 
-下載 `rime-sanjiao-<版本>-schema-only.zip`，裡面只有 `sanjiao.schema.yaml` 和 `sanjiao.dict.yaml`。匯入後，在你自己的 `default.custom.yaml` 的 `patch` 裡加上：
+下載 `rime-sanjiao-schema-only.zip`，裡面只有 `sanjiao.schema.yaml` 和 `sanjiao.dict.yaml`。匯入後，在你自己的 `default.custom.yaml` 的 `patch` 裡加上：
 
 ```yaml
   schema_list/@before 0:
@@ -81,6 +82,18 @@ ABC    ，  0   。  換行
 這樣會把三角編號排在方案清單最前面。倉輸入法每次都用排第一的方案，排在後面就得每次手動切換。
 
 鍵盤設定可以從 hamster 安裝包裡的 `hamster.custom.yaml` 複製 `keyboards` 那一段，合併進你自己的檔案。
+
+## 更新到新版
+
+倉輸入法不會自動更新方案，有新版本時要手動匯入一次（約 1 分鐘）：
+
+1. 先到「檔案」App →「下載項目」，刪掉舊的 `rime-sanjiao-hamster.zip`。檔名相同時新檔會被改名，容易匯入到舊的那個。
+2. 用 Safari 點 [rime-sanjiao-hamster.zip](https://github.com/floraliu-dev/rime-sanjiao/releases/latest/download/rime-sanjiao-hamster.zip)。這個連結永遠指向最新版。
+3. 照上面第 4 步的 2～4 匯入。新版會直接取代舊版。
+
+已經有自訂設定的人，改下載 [rime-sanjiao-schema-only.zip](https://github.com/floraliu-dev/rime-sanjiao/releases/latest/download/rime-sanjiao-schema-only.zip)，匯入後不用再改 `default.custom.yaml`。
+
+**想在有新版時收到通知**：在 [GitHub 專案頁面](https://github.com/floraliu-dev/rime-sanjiao) 右上角點「Watch」→「Custom」→ 勾選「Releases」，發布新版本時會寄 email 給你（需要 GitHub 帳號）。
 
 ## 常見問題
 

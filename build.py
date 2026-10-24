@@ -50,7 +50,6 @@ HAMSTER_PATH = ROOT / "hamster" / "hamster.custom.yaml"
 DIST = ROOT / "dist"
 
 
-
 def zip_date(data: bytes) -> tuple[int, int, int, int, int, int]:
     """A timestamp derived from the file's content.
 
@@ -105,21 +104,24 @@ def write_zip(path: Path, members: dict[str, Path]) -> None:
             zf.writestr(info, data)
 
 
-def package(version: str, dist: Path = DIST) -> list[Path]:
+def package(dist: Path = DIST) -> list[Path]:
     schema_files = {
         "sanjiao.schema.yaml": SCHEMA_PATH,
         "sanjiao.dict.yaml": DICT_PATH,
     }
+    # No version in the file names, so releases/latest/download/<name>
+    # always points at the newest release. The version is inside the
+    # schema (schema/version) and on the release tag.
     outputs = {
         # Everything a new 倉輸入法 user needs, in one import.
-        dist / f"rime-sanjiao-{version}-hamster.zip": {
+        dist / "rime-sanjiao-hamster.zip": {
             **schema_files,
             "default.custom.yaml": DEFAULT_CUSTOM_PATH,
             "hamster.custom.yaml": HAMSTER_PATH,
         },
         # Only the schema, for people who manage their own RIME config
         # (any RIME frontend: 倉, 鼠鬚管, 小狼毫, 中州韻 ...).
-        dist / f"rime-sanjiao-{version}-schema-only.zip": schema_files,
+        dist / "rime-sanjiao-schema-only.zip": schema_files,
     }
     for path, members in outputs.items():
         write_zip(path, members)
@@ -158,7 +160,7 @@ def main() -> int:
         print("\nRun `python build.py` and commit the result.", file=sys.stderr)
         return 1
     if args.package:
-        for path in package(version):
+        for path in package():
             print(f"packaged    {path.relative_to(ROOT).as_posix()}")
     return 0
 

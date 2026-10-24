@@ -11,7 +11,7 @@
 
 ## 1. 鍵盤能不能顯示（先做）
 
-- [ ] 匯入 `rime-sanjiao-<版本>-hamster.zip`，照 `install-iphone.md` 第 5、6 步操作。鍵盤是否出現三角數字鍵盤？＿＿＿
+- [ ] 匯入 `rime-sanjiao-hamster.zip`，照 `install-iphone.md` 第 5、6 步操作。鍵盤是否出現三角數字鍵盤？＿＿＿
 
 如果沒有出現，可能是倉輸入法又改了自訂鍵盤的格式：打開 App 裡的 `SharedSupport/hamster.yaml`，對照內建鍵盤按鍵的寫法和 `design.md`「鍵盤語法」。
 
