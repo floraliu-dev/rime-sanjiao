@@ -6,7 +6,7 @@ Usage:
     python build.py --package  regenerate, then build the zip files in dist/
 
 Generated files (never edit these by hand):
-    rime/sanjiao.dict.yaml               from data/3corner.cin
+    rime/sanjiao.dict.yaml               from data/3corner.cin, data/ios-supplementary.txt
     hamster/hamster.custom.yaml          keyboard
 
 Hand-written files:
@@ -34,6 +34,7 @@ sys.path.insert(0, str(ROOT))
 
 from tools.cin import parse_cin, sha256_of  # noqa: E402
 from tools.dictgen import render_dict  # noqa: E402
+from tools.fontcover import read_supplementary  # noqa: E402
 from tools.keyboard import render_hamster_custom  # noqa: E402
 
 CIN_PATH = ROOT / "data" / "3corner.cin"
@@ -87,7 +88,7 @@ def generated_files(version: str) -> dict[Path, str]:
         )
     table = parse_cin(CIN_PATH)
     return {
-        DICT_PATH: render_dict(table, version=version, source_note=UPSTREAM_NOTE),
+        DICT_PATH: render_dict(table, read_supplementary(), version=version, source_note=UPSTREAM_NOTE),
         HAMSTER_PATH: render_hamster_custom(version=version),
     }
 

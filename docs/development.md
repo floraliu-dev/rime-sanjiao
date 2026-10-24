@@ -50,6 +50,7 @@ git push
 |---|---|---|
 | 輸入規則（連打、標點、空白鍵的行為） | `rime/sanjiao.schema.yaml` | 跑測試；如果行為變了，同時更新 `tests/test_rime.py` 和 `docs/design.md` |
 | 候選排序規則 | `tools/ranking.py` | `python build.py`，跑測試 |
+| iPhone 能顯示哪些罕用字 | `data/ios-supplementary.txt`（在 Mac 上 `pip install fonttools` 後執行 `python -m tools.fontcover` 重新產生，不要手改） | `python build.py`，跑測試 |
 | 鍵盤配置 | `tools/keyboard.py` 的 `LAYOUT` | `python build.py`，跑測試，更新教學裡的鍵盤圖 |
 | 碼表 | 照 `data/SOURCE.md` 的步驟 | |
 | 安裝包內容 | `build.py` 的 `package()` | |

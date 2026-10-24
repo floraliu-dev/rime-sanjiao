@@ -18,13 +18,13 @@
 schema:
   schema_id: sanjiao
   name: 三角編號
-  version: "0.2.0"
+  version: "0.2.1"
   author:
     - 編碼規則 胡立人、張源渭、黃克東（美國王安電腦公司）
     - RIME 方案 Flora Liu
   description: |
     三角編號輸入法（Three-Corner Code）。
-    每字 6 位數字編碼，碼表收錄 32,889 字。
+    每字 6 位數字編碼，碼表收錄 23,820 字（不含 iPhone 顯示不出來的罕用字）。
     碼表來源：chinese-opendesktop/cin-tables（Public Domain）。
 
 switches:
@@ -87,7 +87,8 @@ translator:
   # 不自動造詞。
   enable_encoder: false
   encode_commit_history: false
-  # 顯示全部字，包含 Unicode 擴充區的罕用字（排在最後）。
+  # 顯示碼表裡全部的字，包含 Unicode 擴充區的罕用字（排在最後）。
+  # iPhone 顯示不出來的罕用字在產生碼表時就已移除，見 docs/design.md。
   enable_charset_filter: false
 
 menu:
