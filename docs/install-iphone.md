@@ -50,19 +50,19 @@
 ## 鍵盤用法
 
 ```
-符號   1   2   3   ⌫
-ABC    4   5   6   ，
-🌐     7   8   9   。
-？     、  0   空格 換行
+符號   7   8   9   ？
+、     4   5   6   空格
+🌐     1   2   3   ⌫
+ABC    ，  0   。  換行
 ```
 
 | 想做什麼 | 怎麼做 |
 |---|---|
-| 選字 | 點候選列上的字；或按「空格」選第一個 |
+| 選字 | 打滿 6 碼而且只有一個字時會直接輸入；有好幾個字時，點候選列上的字，或按「換行」選第一個 |
 | 連續打字 | 打滿 6 碼後直接打下一個字的編碼，會自動輸入第一個候選 |
-| 少打幾碼 | 編碼結尾的 0 可以省略，例如「二」101000 只要打 `101` |
-| 打錯編碼 | 按 ⌫ 刪一碼；在 ⌫ 上**往上滑**清除整串 |
-| 輸入數字本身 | 打完數字按「換行」 |
+| 少打幾碼 | 編碼結尾的 0 可以省略，例如「月」260000 只要打 `26` 再按「換行」 |
+| 打錯編碼 | 打到查不到字的編碼會自動清空，直接重打；也可以按 ⌫ 刪一碼，或在 ⌫ 上**往上滑**清除整串 |
+| 輸入數字本身 | 按「符號」或「ABC」切到其他鍵盤 |
 | 其他標點 | 在鍵上**快速往上撥**（滑太慢不會輸入）：「，」往上滑是「；」、「。」往上滑是「：」、「？」往上滑是「！」、「、」往上滑是「「」、往下滑是「」」 |
 | 更多符號 | 按「符號」 |
 | 英文 | 按「ABC」 |
@@ -87,8 +87,9 @@ ABC    4   5   6   ，
 
 倉輸入法不會自動更新方案，有新版本時要手動匯入一次（約 1 分鐘）：
 
-1. 用 Safari 點 [rime-sanjiao-hamster.zip](https://github.com/floraliu-dev/rime-sanjiao/releases/latest/download/rime-sanjiao-hamster.zip)。這個連結永遠指向最新版。
-2. 照上面第 4 步的 2～4 匯入。新版會直接取代舊版。
+1. 先到「檔案」App →「下載項目」，刪掉舊的 `rime-sanjiao-hamster.zip`。檔名相同時新檔會被改名，容易匯入到舊的那個。
+2. 用 Safari 點 [rime-sanjiao-hamster.zip](https://github.com/floraliu-dev/rime-sanjiao/releases/latest/download/rime-sanjiao-hamster.zip)。這個連結永遠指向最新版。
+3. 照上面第 4 步的 2～4 匯入。新版會直接取代舊版。
 
 已經有自訂設定的人，改下載 [rime-sanjiao-schema-only.zip](https://github.com/floraliu-dev/rime-sanjiao/releases/latest/download/rime-sanjiao-schema-only.zip)，匯入後不用再改 `default.custom.yaml`。
 

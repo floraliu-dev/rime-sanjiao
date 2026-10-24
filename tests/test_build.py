@@ -77,6 +77,11 @@ class Packages(unittest.TestCase):
             for a, b in zip(self.paths, again):
                 self.assertEqual(a.read_bytes(), b.read_bytes(), msg=a.name)
 
+    def test_changed_content_gets_a_new_date(self):
+        # RIME rebuilds only when a file's modification time changes.
+        self.assertEqual(build.zip_date(b"a"), build.zip_date(b"a"))
+        self.assertNotEqual(build.zip_date(b"a"), build.zip_date(b"b"))
+
 
 if __name__ == "__main__":
     unittest.main()

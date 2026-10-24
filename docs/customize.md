@@ -15,16 +15,16 @@ patch:
 
 缺點：只要選過一次某個字，它就會排到最前面。之後按空格或連打時，送出的字可能和你習慣的不一樣。
 
-## 唯一候選自動送出
+## 關閉唯一候選自動送出
 
-打滿 6 碼而且只有一個候選字時，直接送出，不必按空格。大約 88% 的編碼只對應一個字。
+預設打滿 6 碼而且只有一個候選字時，會直接送出（大約 88% 的編碼只對應一個字）。如果想每個字都自己確認，可以關掉：
 
 ```yaml
 patch:
-  speller/auto_select: true
+  speller/auto_select: false
 ```
 
-缺點：打錯碼時，如果剛好也對應到某個字，會直接送出錯字。
+關掉後，打滿 6 碼要點候選字，或按換行、空格送出。
 
 ## 兩個設定都要
 
@@ -33,5 +33,5 @@ patch:
 ```yaml
 patch:
   translator/enable_user_dict: true
-  speller/auto_select: true
+  speller/auto_select: false
 ```

@@ -8,16 +8,17 @@
 #
 # 輸入規則（設計理由見 docs/design.md）：
 #   - 每個字的編碼固定 6 位數字。
-#   - 數字鍵只用來打編碼；選字用點選候選字，或按空白鍵送出第一個候選。
+#   - 數字鍵只用來打編碼；選字用點選候選字，或按換行（Enter）／空白鍵送出第一個候選。
 #   - 打字時就即時顯示候選字，不必打滿 6 碼。
 #   - 編碼結尾的 0 可以省略：打「101」就能找到編碼 101000 的字。
+#   - 打滿 6 碼而且只有一個字時，直接送出；有好幾個字時才讓使用者選。
 #   - 打滿 6 碼後直接打下一個字的編碼，會自動送出目前第一個候選（連打）。
-#   - 按換行（Enter）會送出原本打的數字，用來輸入數字本身。
+#   - 打到查不到任何字的編碼時，立刻清空，直接重打。
 
 schema:
   schema_id: sanjiao
   name: 三角編號
-  version: "0.1.1"
+  version: "0.2.0"
   author:
     - 編碼規則 胡立人、張源渭、黃克東（美國王安電腦公司）
     - RIME 方案 Flora Liu
@@ -39,7 +40,7 @@ engine:
     - punctuator       # 標點符號
     - selector         # 選字、翻頁
     - navigator        # 移動游標
-    - express_editor   # 空白鍵送出候選、Enter 送出原始數字、刪除鍵
+    - express_editor   # 空白鍵送出候選、刪除鍵
   segmentors:
     - ascii_segmentor
     - abc_segmentor    # 把連續的數字切成一段編碼
@@ -57,8 +58,12 @@ speller:
   # 編碼最長 6 碼。打第 7 個數字時，若第一個候選已完整對應 6 碼，
   # 就先送出它，再把這個數字當成下一個字的開頭（連打）。
   max_code_length: 6
-  # 不自動送出「唯一候選」：打滿 6 碼後仍由使用者確認，避免誤送。
-  auto_select: false
+  # 唯一候選自動送出：打滿 6 碼而且只有一個字時，直接送出，不必再選。
+  # 有兩個以上的字時不會送出，等使用者選。
+  auto_select: true
+  # 打錯碼就清空：打完一個數字後，如果沒有任何字的編碼以目前數字開頭，
+  # 立刻清空，不必按刪除鍵。
+  auto_clear: auto
   # 省略結尾的 0：為每個以 0 結尾的編碼，額外產生去掉結尾 0 的拼法。
   # 例：101000 → 10100、1010、101。只去掉「非 0 數字之後」的 0，
   # 所以 000000 不會產生空編碼。重複 5 次，涵蓋最多 5 個結尾 0。
@@ -110,16 +115,17 @@ punctuator:
     "~": "～"
     "^": "……"
     "_": "——"
+    # 鍵盤上的「換行」鍵送出 |（見下方 key_binder）。沒在打字時就是換行。
+    "|": { commit: "\n" }  # 只寫 "\n" 不會送出，要用 commit
   full_shape: *punct
 
 key_binder:
   bindings:
-    # 空白鍵：有候選字時送出第一個；編碼查不到字時什麼都不做，
-    # 保留打錯的編碼讓使用者用刪除鍵修正（不會把數字當成文字送出）。
-    # 規則由上往下比對，第一條符合的生效。F35 是一個合法但沒有任何
-    # 功能會處理的按鍵，用來「吃掉」這次空白鍵。
-    - { when: has_menu, accept: space, send: space }
-    - { when: composing, accept: space, send: F35 }
+    # 換行：有候選字時送出第一個，跟空白鍵一樣。例：「月」260000 打 26 再按換行。
+    # 倉輸入法的內建換行鍵（enter）在打字途中會自己送出數字，不經過這裡，
+    # 所以鍵盤上的換行鍵改送 |；實體鍵盤的 Enter 也照同樣規則。
+    - { when: has_menu, accept: bar, send: space }
+    - { when: has_menu, accept: Return, send: space }
     # 實體鍵盤：- 和 = 翻頁
     - { when: has_menu, accept: minus, send: Page_Up }
     - { when: has_menu, accept: equal, send: Page_Down }

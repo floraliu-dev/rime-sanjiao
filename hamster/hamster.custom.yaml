@@ -1,7 +1,7 @@
 # 倉輸入法（Hamster）設定補丁：三角編號鍵盤
 #
 # 本檔由 build.py 自動產生，請勿手動修改；鍵盤配置定義在 tools/keyboard.py。
-# 版本：0.1.1
+# 版本：0.2.0
 #
 # 注意：
 # 1. 匯入後會取代手機上原有的 hamster.custom.yaml（如果有的話）。
@@ -20,6 +20,46 @@ patch:
         - keys:
             - action: { keyboardType: classifySymbolic }
               label: "符號"
+            - action: { character: { char: "7" } }
+              processByRIME: true
+            - action: { character: { char: "8" } }
+              processByRIME: true
+            - action: { character: { char: "9" } }
+              processByRIME: true
+            - action: { character: { char: "?" } }
+              label: "？"
+              processByRIME: true
+              swipe:
+                - direction: up
+                  action: { character: { char: "!" } }
+                  label: "！"
+                  display: true
+                  processByRIME: true
+        - keys:
+            - action: { character: { char: "\\" } }
+              label: "、"
+              processByRIME: true
+              swipe:
+                - direction: up
+                  action: { character: { char: "[" } }
+                  label: "「"
+                  display: true
+                  processByRIME: true
+                - direction: down
+                  action: { character: { char: "]" } }
+                  label: "」"
+                  display: true
+                  processByRIME: true
+            - action: { character: { char: "4" } }
+              processByRIME: true
+            - action: { character: { char: "5" } }
+              processByRIME: true
+            - action: { character: { char: "6" } }
+              processByRIME: true
+            - action: space
+              label: { loadingText: "三角編號", text: "空格" }
+        - keys:
+            - action: nextKeyboard
             - action: { character: { char: "1" } }
               processByRIME: true
             - action: { character: { char: "2" } }
@@ -35,12 +75,6 @@ patch:
         - keys:
             - action: { keyboardType: alphabetic }
               label: "ABC"
-            - action: { character: { char: "4" } }
-              processByRIME: true
-            - action: { character: { char: "5" } }
-              processByRIME: true
-            - action: { character: { char: "6" } }
-              processByRIME: true
             - action: { character: { char: "," } }
               label: "，"
               processByRIME: true
@@ -50,13 +84,7 @@ patch:
                   label: "；"
                   display: true
                   processByRIME: true
-        - keys:
-            - action: nextKeyboard
-            - action: { character: { char: "7" } }
-              processByRIME: true
-            - action: { character: { char: "8" } }
-              processByRIME: true
-            - action: { character: { char: "9" } }
+            - action: { character: { char: "0" } }
               processByRIME: true
             - action: { character: { char: "." } }
               label: "。"
@@ -67,32 +95,6 @@ patch:
                   label: "："
                   display: true
                   processByRIME: true
-        - keys:
-            - action: { character: { char: "?" } }
-              label: "？"
+            - action: { character: { char: "|" } }
+              label: "換行"
               processByRIME: true
-              swipe:
-                - direction: up
-                  action: { character: { char: "!" } }
-                  label: "！"
-                  display: true
-                  processByRIME: true
-            - action: { character: { char: "\\" } }
-              label: "、"
-              processByRIME: true
-              swipe:
-                - direction: up
-                  action: { character: { char: "[" } }
-                  label: "「"
-                  display: true
-                  processByRIME: true
-                - direction: down
-                  action: { character: { char: "]" } }
-                  label: "」"
-                  display: true
-                  processByRIME: true
-            - action: { character: { char: "0" } }
-              processByRIME: true
-            - action: space
-              label: { loadingText: "三角編號", text: "空格" }
-            - action: enter

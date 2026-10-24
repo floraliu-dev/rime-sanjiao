@@ -14,7 +14,7 @@
 
 ---
 name: sanjiao
-version: "0.1.1"
+version: "0.2.0"
 sort: by_weight
 use_preset_vocabulary: false
 max_phrase_length: 1
