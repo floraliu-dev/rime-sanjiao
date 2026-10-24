@@ -6,13 +6,14 @@ action: { character: { char: "1" } }, which the App Store build accepts
 
 Layout (portrait), 5 equal-width columns:
 
-    符號   1   2   3   ⌫        ⌫ swipe up: clear the code being typed
-    ABC    4   5   6   ，       ， swipe up: ；
-    🌐     7   8   9   。       。 swipe up: ：
-    ？     、  0   空格 換行     ？ swipe up: ！   、 swipe up: 「  down: 」
+    符號   7   8   9   ？       ？ swipe up: ！
+    、     4   5   6   空格     、 swipe up: 「  down: 」
+    🌐     1   2   3   ⌫        ⌫ swipe up: clear the code being typed
+    ABC    ，  0   。  換行     ， swipe up: ；   。 swipe up: ：
 
 Design notes:
-* Digits sit in the familiar phone-pad grid, with 0 under 8.
+* Digits sit in the calculator grid (7 8 9 on top), with 0 under 2, like the
+  三角編號 numeric keyboard users already know.
 * Punctuation keys send ASCII through RIME, so the schema's punctuator turns
   "," into "，" and first commits whatever is being typed.
 * 🌐 (nextKeyboard) is always present: iPhones with a Home button have no
@@ -88,16 +89,19 @@ BACKSPACE = Key(
 )
 
 LAYOUT: tuple[tuple[Key, ...], ...] = (
-    (Key(SwitchKeyboard("classifySymbolic"), "符號"), _digit("1"), _digit("2"), _digit("3"), BACKSPACE),
-    (Key(SwitchKeyboard("alphabetic"), "ABC"), _digit("4"), _digit("5"), _digit("6"),
-     _punct(",", "，", Swipe("up", Char(";"), "；"))),
-    (Key(Simple("nextKeyboard")), _digit("7"), _digit("8"), _digit("9"),
-     _punct(".", "。", Swipe("up", Char(":"), "："))),
-    (_punct("?", "？", Swipe("up", Char("!"), "！")),
-     _punct("\\", "、", Swipe("up", Char("["), "「"), Swipe("down", Char("]"), "」")),
+    (Key(SwitchKeyboard("classifySymbolic"), "符號"), _digit("7"), _digit("8"), _digit("9"),
+     _punct("?", "？", Swipe("up", Char("!"), "！"))),
+    (_punct("\\", "、", Swipe("up", Char("["), "「"), Swipe("down", Char("]"), "」")),
+     _digit("4"), _digit("5"), _digit("6"), Key(Simple("space"), "空格")),
+    (Key(Simple("nextKeyboard")), _digit("1"), _digit("2"), _digit("3"), BACKSPACE),
+    (Key(SwitchKeyboard("alphabetic"), "ABC"),
+     _punct(",", "，", Swipe("up", Char(";"), "；")),
      _digit("0"),
-     Key(Simple("space"), "空格"),
-     Key(Simple("enter"))),
+     _punct(".", "。", Swipe("up", Char(":"), "：")),
+     # Not Simple("enter"): Hamster's enter commits the raw digits itself
+     # while composing. "|" goes through RIME, which commits the first
+     # candidate, or a newline when nothing is being typed.
+     _punct("|", "換行")),
 )
 
 # Every ASCII character the keyboard sends to RIME. The schema's punctuator

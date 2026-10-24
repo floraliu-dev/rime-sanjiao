@@ -103,15 +103,24 @@ class Behaviour(unittest.TestCase):
 
     # -- looking up characters -------------------------------------------------
 
-    def test_full_code(self):
-        self.assertEqual(self.typed("101010").texts(), ["三"])
-        self.assertEqual(self.typed("305354").texts(), ["我"])
+    def test_unique_full_code_commits_itself(self):
+        for keys, char in (("101010", "三"), ("305354", "我"), ("495472", "李"), ("442958", "蓁")):
+            with self.subTest(keys=keys):
+                s = self.typed(keys)
+                self.assertEqual((s.committed, s.input), (char, ""))
+        self.assertEqual(self.typed("101010305354").committed, "三我")
+
+    def test_several_candidates_wait_for_a_choice(self):
+        s = self.typed("140400")
+        self.assertEqual((s.committed, s.input, s.texts()), ("", "140400", ["玟", "玫"]))
+        s.pick(1)
+        self.assertEqual(s.committed, "玫")
 
     def test_leading_zeros(self):
-        self.assertEqual(self.typed("000010").texts()[0], "═")
+        self.assertEqual(self.typed("000010").committed, "═")
 
     def test_ideographic_space(self):
-        self.assertEqual(self.typed("000000").texts()[0], "　")
+        self.assertEqual(self.typed("000000").committed, "　")
 
     def test_trailing_zeros_may_be_omitted(self):
         # 101000 二, typed as 10100 / 1010 / 101; 100000 一, typed as 1.
@@ -120,6 +129,7 @@ class Behaviour(unittest.TestCase):
                 self.assertEqual(self.typed(keys).texts()[0], "二")
         self.assertEqual(self.typed("1").texts()[0], "一")
         self.assertEqual(self.typed("10101").texts()[0], "三")  # 101010
+        self.assertEqual(self.typed("26").texts()[0], "月")  # 260000
 
     def test_completion_while_typing(self):
         cands = self.typed("101").candidates(20)
@@ -138,15 +148,30 @@ class Behaviour(unittest.TestCase):
         self.assertEqual(self.s.committed, "滒")
         self.assertEqual(self.typed("331120").texts()[0], "汗")
 
-    def test_invalid_code_has_no_candidates(self):
-        self.assertEqual(self.typed("999999").texts(), [])
+    def test_invalid_code_is_cleared(self):
+        # 44295 has candidates (蓁 is 442958); no code starts with 442956.
+        self.assertEqual(self.typed("44295").input, "44295")
+        s = self.typed("442956")
+        self.assertEqual((s.input, s.texts(), s.committed), ("", [], ""))
+        self.assertEqual(self.typed("4429568").input, "8")  # next digit starts afresh
 
     # -- committing ------------------------------------------------------------
 
     def test_space_commits_first_candidate(self):
-        s = self.typed("101010{space}")
+        s = self.typed("10101{space}")
         self.assertEqual((s.committed, s.input), ("三", ""))
         self.assertEqual(self.typed("10{space}").committed, "一")
+
+    def test_enter_commits_first_candidate(self):
+        # "|" is the touch keyboard's 換行 key; Return is a physical Enter.
+        for enter in ("|", "{Return}"):
+            with self.subTest(enter=enter):
+                s = self.typed("26" + enter)
+                self.assertEqual((s.committed, s.input), ("月", ""))
+                self.assertEqual(self.typed("140400" + enter).committed, "玟")
+
+    def test_enter_key_alone_is_a_newline(self):
+        self.assertEqual(self.typed("|").committed, "\n")
 
     def test_tap_candidate(self):
         self.typed("331120")
@@ -154,28 +179,20 @@ class Behaviour(unittest.TestCase):
         self.assertEqual((self.s.committed, self.s.input), ("汙", ""))
 
     def test_continuous_typing_commits_at_seventh_digit(self):
-        s = self.typed("1010103")
-        self.assertEqual((s.committed, s.input), ("三", "3"))
-        s = self.typed("101010305354{space}")
-        self.assertEqual(s.committed, "三我")
-
-    def test_space_with_invalid_code_keeps_it(self):
-        s = self.typed("999999{space}")
-        self.assertEqual((s.committed, s.input), ("", "999999"))
-        s.type("{BackSpace}")
-        self.assertEqual(s.input, "99999")
+        s = self.typed("1404001")
+        self.assertEqual((s.committed, s.input), ("玟", "1"))
 
     def test_space_with_nothing_typed_is_passed_to_the_app(self):
         # Not handled by RIME, so the app inserts a normal space.
         self.s.reset()
         self.assertFalse(self.s.press("space"))
 
-    def test_enter_commits_digits(self):
-        s = self.typed("2026{Return}")
-        self.assertEqual((s.committed, s.input), ("2026", ""))
+    def test_enter_with_nothing_typed_is_passed_to_the_app(self):
+        self.s.reset()
+        self.assertFalse(self.s.press("Return"))
 
     def test_escape_and_backspace(self):
-        s = self.typed("101010{Escape}")
+        s = self.typed("10101{Escape}")
         self.assertEqual((s.committed, s.input), ("", ""))
         s = self.typed("1{BackSpace}")
         self.assertEqual(s.input, "")
@@ -190,8 +207,8 @@ class Behaviour(unittest.TestCase):
                 self.assertEqual(self.typed(key).committed, out)
 
     def test_punctuation_commits_pending_character(self):
-        self.assertEqual(self.typed("101010,").committed, "三，")
-        self.assertEqual(self.typed("101010\\").committed, "三、")
+        self.assertEqual(self.typed("10101,").committed, "三，")
+        self.assertEqual(self.typed("140400\\").committed, "玟、")
 
 
 @unittest.skipUnless(HAVE_RIME, f"librime not found in {RIME_DIST}")
@@ -223,9 +240,9 @@ class OtherPackages(unittest.TestCase):
             "default.custom.yaml": "patch:\n  schema_list/@before 0:\n    schema: sanjiao\n",
         }, """
             s.type("101010")
-            print(s.texts())
+            print(s.committed)
         """)
-        self.assertEqual(out.strip(), "['三']")
+        self.assertEqual(out.strip(), "三")
 
     def test_customize_enable_learning(self):
         # The patch documented in docs/customize.md.
@@ -237,17 +254,14 @@ class OtherPackages(unittest.TestCase):
         """)
         self.assertEqual(out.strip(), "滒")
 
-    def test_customize_auto_select(self):
+    def test_customize_turn_off_auto_select(self):
         # Also documented in docs/customize.md.
         out = self.run_scenario("-hamster.zip", {
-            "sanjiao.custom.yaml": "patch:\n  speller/auto_select: true\n",
+            "sanjiao.custom.yaml": "patch:\n  speller/auto_select: false\n",
         }, """
             s.type("101010"); print(repr(s.committed), repr(s.input))
-            s.reset(); s.type("331120"); print(repr(s.committed), repr(s.input))
         """)
-        unique, several = out.strip().split("\n")
-        self.assertEqual(unique, "'三' ''")  # one candidate: sent at once
-        self.assertEqual(several, "'' '331120'")  # six candidates: waits
+        self.assertEqual(out.strip(), "'' '101010'")  # waits for a choice
 
 
 if __name__ == "__main__":

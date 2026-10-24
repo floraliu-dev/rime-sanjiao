@@ -16,9 +16,11 @@ Hand-written files:
 from __future__ import annotations
 
 import argparse
+import hashlib
 import re
 import sys
 import zipfile
+from datetime import datetime, timedelta
 from pathlib import Path
 
 if sys.version_info < (3, 10):
@@ -47,8 +49,19 @@ DICT_PATH = ROOT / "rime" / "sanjiao.dict.yaml"
 HAMSTER_PATH = ROOT / "hamster" / "hamster.custom.yaml"
 DIST = ROOT / "dist"
 
-# Fixed timestamp so the same sources always produce byte-identical zips.
-ZIP_DATE = (2026, 1, 1, 0, 0, 0)
+
+
+def zip_date(data: bytes) -> tuple[int, int, int, int, int, int]:
+    """A timestamp derived from the file's content.
+
+    The same content always gets the same date, so zips are byte-identical.
+    Changed content gets a different date, which matters: RIME rebuilds a
+    schema only when a source file's modification time differs from the one
+    it recorded, so a fixed date made 倉輸入法 keep the old schema after an
+    update (found on a device on 2026-10-24).
+    """
+    seconds = int.from_bytes(hashlib.sha256(data).digest()[:4], "big") % (20 * 365 * 86400)  # 2000–2019: never in the future
+    return (datetime(2000, 1, 1) + timedelta(seconds=seconds - seconds % 2)).timetuple()[:6]
 
 
 def read_version() -> str:
@@ -85,10 +98,11 @@ def write_zip(path: Path, members: dict[str, Path]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(path, "w", compression=zipfile.ZIP_DEFLATED) as zf:
         for name, src in sorted(members.items()):
-            info = zipfile.ZipInfo(name, date_time=ZIP_DATE)
+            data = src.read_bytes()
+            info = zipfile.ZipInfo(name, date_time=zip_date(data))
             info.compress_type = zipfile.ZIP_DEFLATED
             info.external_attr = 0o644 << 16
-            zf.writestr(info, src.read_bytes())
+            zf.writestr(info, data)
 
 
 def package(version: str, dist: Path = DIST) -> list[Path]:

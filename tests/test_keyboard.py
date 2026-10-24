@@ -46,14 +46,14 @@ class Layout(unittest.TestCase):
                   if isinstance(a, Char) and a.char.isdigit()]
         self.assertEqual(sorted(digits), list("0123456789"))
 
-    def test_phone_pad_positions(self):
+    def test_calculator_positions(self):
         grid = [[k.action.char if isinstance(k.action, Char) else None for k in row] for row in LAYOUT]
-        self.assertEqual([r[1:4] for r in grid[:3]], [["1", "2", "3"], ["4", "5", "6"], ["7", "8", "9"]])
-        self.assertEqual(grid[3][2], "0")  # 0 under 8
+        self.assertEqual([r[1:4] for r in grid[:3]], [["7", "8", "9"], ["4", "5", "6"], ["1", "2", "3"]])
+        self.assertEqual(grid[3][2], "0")  # 0 under 2
 
     def test_essential_keys_present(self):
         actions = set(all_actions())
-        for needed in (Simple("backspace"), Simple("space"), Simple("enter"), Simple("nextKeyboard"),
+        for needed in (Simple("backspace"), Simple("space"), Char("|"), Simple("nextKeyboard"),
                        SwitchKeyboard("alphabetic"), SwitchKeyboard("classifySymbolic")):
             with self.subTest(needed=needed):
                 self.assertIn(needed, actions)
