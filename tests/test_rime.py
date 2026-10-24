@@ -139,7 +139,7 @@ class Behaviour(unittest.TestCase):
         self.assertEqual(completions.get("三"), "~010")  # remaining digits shown
 
     def test_candidate_order(self):
-        self.assertEqual(self.typed("331120").texts(), ["汗", "汙", "涆", "滒", "泟", "𣵼"])
+        self.assertEqual(self.typed("331120").texts(), ["汗", "汙", "涆", "滒", "泟"])
         self.assertEqual(self.typed("018660").texts()[0], "高")
 
     def test_fixed_order_does_not_learn(self):
@@ -147,6 +147,11 @@ class Behaviour(unittest.TestCase):
         self.s.pick(3)
         self.assertEqual(self.s.committed, "滒")
         self.assertEqual(self.typed("331120").texts()[0], "汗")
+
+    def test_undisplayable_character_not_offered(self):
+        # 𢘍 (559300) was the only code starting with 559; iPhone cannot show it.
+        self.assertEqual(self.typed("55").input, "55")
+        self.assertEqual(self.typed("559").input, "")
 
     def test_invalid_code_is_cleared(self):
         # 44295 has candidates (蓁 is 442958); no code starts with 442956.
